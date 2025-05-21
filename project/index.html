@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการงานสัมมนา</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">ระบบจัดการงานสัมมนา</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" id="dashboard-link">
+                                <i class="fas fa-home me-2"></i>แดชบอร์ด
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="events-link">
+                                <i class="fas fa-calendar-alt me-2"></i>งานสัมมนา
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="participants-link">
+                                <i class="fas fa-users me-2"></i>ผู้เข้าร่วม
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="add-event-link">
+                                <i class="fas fa-plus-circle me-2"></i>เพิ่มงานสัมมนา
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="add-participant-link">
+                                <i class="fas fa-user-plus me-2"></i>เพิ่มผู้เข้าร่วม
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2" id="page-title">แดชบอร์ด</h1>
+                    <div class="spinner-border text-primary" id="loading-indicator" role="status" style="display: none;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Dashboard Content -->
+                <div id="dashboard-content">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card bg-primary text-white h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">ผู้เข้าร่วมทั้งหมด</h5>
+                                    <h2 class="card-text" id="total-participants">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card bg-success text-white h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">งานสัมมนา</h5>
+                                    <h2 class="card-text" id="total-events">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card bg-warning text-dark h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">ใกล้เต็ม</h5>
+                                    <h2 class="card-text" id="full-events">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="card-title mb-0">งานสัมมนาล่าสุด</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่องาน</th>
+                                                    <th>วันที่</th>
+                                                    <th>สถานะ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="recent-events">
+                                                <!-- Recent events will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="card-title mb-0">ผู้เข้าร่วมล่าสุด</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่อ</th>
+                                                    <th>งานสัมมนา</th>
+                                                    <th>วันที่สมัคร</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="recent-participants">
+                                                <!-- Recent participants will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events List Content -->
+                <div id="events-content" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ชื่องานสัมมนา</th>
+                                    <th>คำอธิบาย</th>
+                                    <th>วันที่</th>
+                                    <th>จำนวนผู้เข้าร่วม</th>
+                                    <th>การดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="events-table-body">
+                                <!-- Events will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Participants List Content -->
+                <div id="participants-content" style="display: none;">
+                    <div class="mb-3 row">
+                        <div class="col-md-4">
+                            <select class="form-select" id="event-filter">
+                                <option value="">ทั้งหมด</option>
+                                <!-- Events will be loaded here -->
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="search-participant" placeholder="ค้นหาผู้เข้าร่วม...">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ชื่อ-สกุล</th>
+                                    <th>อีเมล</th>
+                                    <th>โทรศัพท์</th>
+                                    <th>งานสัมมนา</th>
+                                    <th>การดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="participants-table-body">
+                                <!-- Participants will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Add Event Content -->
+                <div id="add-event-content" style="display: none;">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="card-title mb-0">เพิ่มงานสัมมนาใหม่</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="event-form">
+                                        <div class="mb-3">
+                                            <label for="event-title" class="form-label">ชื่องานสัมมนา</label>
+                                            <input type="text" class="form-control" id="event-title" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="event-description" class="form-label">คำอธิบาย</label>
+                                            <textarea class="form-control" id="event-description" rows="3" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="event-date" class="form-label">วันที่</label>
+                                            <input type="date" class="form-control" id="event-date" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="event-max-participants" class="form-label">จำนวนผู้เข้าร่วมสูงสุด</label>
+                                            <input type="number" class="form-control" id="event-max-participants" min="1" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>
+                                        <button type="button" class="btn btn-secondary" onclick="switchView('events')">ยกเลิก</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Participant Content -->
+                <div id="add-participant-content" style="display: none;">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="card-title mb-0">ลงทะเบียนผู้เข้าร่วมงานใหม่</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="participant-form">
+                                        <div class="mb-3">
+                                            <label for="event-id" class="form-label">งานสัมมนา</label>
+                                            <select class="form-select" id="event-id" required>
+                                                <option value="" selected disabled>เลือกงานสัมมนา</option>
+                                                <!-- Events will be loaded here -->
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fullname" class="form-label">ชื่อ-สกุล</label>
+                                            <input type="text" class="form-control" id="fullname" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">อีเมล</label>
+                                            <input type="email" class="form-control" id="email" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">โทรศัพท์</label>
+                                            <input type="tel" class="form-control" id="phone">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>
+                                        <button type="button" class="btn btn-secondary" onclick="switchView('participants')">ยกเลิก</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Event Content -->
+                <div id="edit-event-content" style="display: none;">
+                    <!-- Uses the same form as add-event-content -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">ยืนยันการลบ</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">ลบ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">สำเร็จ</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="success-message"></div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">เกิดข้อผิดพลาด</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+</body>
+</html>
